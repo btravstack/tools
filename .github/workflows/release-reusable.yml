@@ -10,7 +10,7 @@
 #   jobs:
 #     release:
 #       if: ${{ github.event.workflow_run.conclusion == 'success' }}
-#       uses: btravstack/config/.github/workflows/release-reusable.yml@main
+#       uses: btravstack/tools/.github/workflows/release-reusable.yml@main
 #       secrets:
 #         RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
 #

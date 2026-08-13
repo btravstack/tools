@@ -1,12 +1,12 @@
 {
-  "name": "@btravstack/config-root",
+  "name": "@btravstack/tools-root",
   "private": true,
   "description": "Shared configuration packages for btravstack repositories",
   "license": "MIT",
   "author": "Benoit TRAVERS <benoit.travers.fr@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/btravstack/config.git"
+    "url": "https://github.com/btravstack/tools.git"
   },
   "type": "module",
   "scripts": {
