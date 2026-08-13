@@ -20,18 +20,12 @@ allowBuilds:
   lefthook: true
 
 overrides:
-  # GHSA-v2hh-gcrm-f6hx (High): fast-uri host confusion via literal backslash
-  # authority delimiter. Only the vulnerable <3.1.4 line is present (transitive,
-  # via @commitlint/cli > ajv); 3.1.4 is the first patched release. Newly
-  # disclosed; dev-tooling only. fast-uri is in minimumReleaseAgeExclude below
-  # because 3.1.4 is younger than the 7-day cutoff.
-  "fast-uri@<3.1.4": "3.1.4"
+  # GHSA-7p8r-x3mc-p8w7 (High, supersedes GHSA-v2hh-gcrm-f6hx): fast-uri,
+  # patched in 3.1.5. Transitive only (via @commitlint/cli > ajv); dev-tooling
+  # only. 3.1.5 published 2026-07-31, past the 7-day cutoff.
+  "fast-uri@<3.1.5": "3.1.5"
 
 # Supply-chain maturity delay: mirror the consumer repos. Don't adopt a freshly
 # published version until it has been on the registry for 7 days (10080 minutes).
 minimumReleaseAge: 10080
 minimumReleaseAgeStrict: true
-minimumReleaseAgeExclude:
-  # Temporary: fast-uri 3.1.4 (the GHSA-v2hh-gcrm-f6hx override above) is younger
-  # than the 7-day cutoff. Remove once 3.1.4 is 7 days old (published 2026-07-19).
-  - fast-uri

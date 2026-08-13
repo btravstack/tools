@@ -7,15 +7,15 @@
     "config",
     "conventional-commits"
   ],
-  "homepage": "https://github.com/btravstack/config/tree/main/packages/commitlint#readme",
+  "homepage": "https://github.com/btravstack/tools/tree/main/packages/commitlint#readme",
   "bugs": {
-    "url": "https://github.com/btravstack/config/issues"
+    "url": "https://github.com/btravstack/tools/issues"
   },
   "license": "MIT",
   "author": "Benoit TRAVERS <benoit.travers.fr@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/btravstack/config.git",
+    "url": "https://github.com/btravstack/tools.git",
     "directory": "packages/commitlint"
   },
   "files": [

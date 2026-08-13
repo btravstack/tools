@@ -1,4 +1,4 @@
-# @btravstack/config
+# @btravstack/tools
 
 Shared configuration packages for [btravstack](https://github.com/btravstack)
 repositories. Each repo used to hand-copy a near-identical `tools/tsconfig`,
@@ -102,7 +102,7 @@ on:
   pull_request: { branches: [main] }
 jobs:
   ci:
-    uses: btravstack/config/.github/workflows/ci-reusable.yml@main
+    uses: btravstack/tools/.github/workflows/ci-reusable.yml@main
     with:
       changeset: true # contract repos that enforce changesets
 ```
@@ -115,7 +115,7 @@ on:
 jobs:
   release:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    uses: btravstack/config/.github/workflows/release-reusable.yml@main
+    uses: btravstack/tools/.github/workflows/release-reusable.yml@main
     secrets:
       RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
 ```
