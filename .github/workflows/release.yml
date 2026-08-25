@@ -27,6 +27,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          # The exact commit the green CI run measured, never the branch tip: a
+          # `workflow_run` checkout otherwise takes the default branch's CURRENT
+          # tip, which a push landing after CI went green can have moved.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           # PAT so the git remote is configured with PAT credentials; the bare
           # GITHUB_TOKEN push checkout normally sets up is treated as a bot
           # event and would not fire `pull_request` workflows on the resulting
@@ -38,14 +42,24 @@ jobs:
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
-        uses: changesets/action@v1
+        # v2, not v1: v1 bundles `@changesets/read@^0.6.7`, which parses EVERY
+        # `.changeset/*.md` as a changeset and fails the whole release on a
+        # repository that keeps `.changeset/CLAUDE.md` beside its changesets.
+        # `@changesets/read@1.0.0` — v2's — ignores `README.md`, `AGENTS.md`,
+        # `CLAUDE.md` and `GEMINI.md`. v2 also renamed every input.
+        uses: changesets/action@v2
         with:
+          # An INPUT now: v2 defaults `github-token` to `${{ github.token }}`,
+          # so passing the PAT only through the environment below would
+          # silently fall back to the bot token, and a release PR opened by it
+          # starts no workflow runs — the exact thing the PAT prevents.
+          github-token: ${{ secrets.RELEASE_PAT }}
           # Use `pnpm run …` so we invoke the package.json scripts. Bare
           # `pnpm version` collides with pnpm's built-in `version` command.
-          version: pnpm run version
-          publish: pnpm run release
-          commit: "chore: release packages"
-          title: "chore: release packages"
+          version-script: pnpm run version
+          publish-script: pnpm run release
+          commit-message: "chore: release packages"
+          pr-title: "chore: release packages"
         env:
           # PAT rather than GITHUB_TOKEN: events triggered by GITHUB_TOKEN do
           # not start new workflow runs (anti-recursion safeguard), so the

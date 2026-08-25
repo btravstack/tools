@@ -11,6 +11,8 @@
 #     release:
 #       if: ${{ github.event.workflow_run.conclusion == 'success' }}
 #       uses: btravstack/tools/.github/workflows/release-reusable.yml@main
+#       with:
+#         ref: ${{ github.event.workflow_run.head_sha }}
 #       secrets:
 #         RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
 #
@@ -30,6 +32,17 @@ on:
         description: "Command changesets/action runs to publish."
         type: string
         default: "pnpm run release"
+      ref:
+        description: >
+          Commit to check out. A caller on `workflow_run` should pass
+          `github.event.workflow_run.head_sha` — the exact commit the green run
+          measured. Without it a `workflow_run` checkout takes the default
+          branch's CURRENT tip, which a push landing after CI went green can
+          have moved, and the release then carries a commit no CI run
+          validated. Empty is checkout's own default, so omitting it keeps the
+          previous behaviour.
+        type: string
+        default: ""
     secrets:
       RELEASE_PAT:
         description: "PAT with Contents + Pull requests write (fires CI on the release PR)."
@@ -48,16 +61,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          ref: ${{ inputs.ref }}
           # PAT so the release PR is created with credentials that DO fire
           # `pull_request` workflows (the bare GITHUB_TOKEN push is treated as a
           # bot event and would skip CI on the "Version Packages" branch).
           token: ${{ secrets.RELEASE_PAT }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: pnpm
@@ -65,14 +79,29 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # v2, not v1, and the reason is a real failure rather than hygiene: v1
+      # bundles `@changesets/read@^0.6.7`, which parses EVERY `.changeset/*.md`
+      # as a changeset. A repository keeping agent guidance beside its
+      # changesets — `.changeset/CLAUDE.md` — fails the whole release with
+      # `could not parse changeset - missing or invalid frontmatter`, which is
+      # what happened to btravstack/btravstack. `@changesets/read@1.0.0`, which
+      # v2 bundles, ignores `README.md`, `AGENTS.md`, `CLAUDE.md` and
+      # `GEMINI.md`.
+      #
+      # v2 renamed every input; the pairs are version->version-script,
+      # publish->publish-script, commit->commit-message, title->pr-title.
       - name: Create Release Pull Request or Publish to npm
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: ${{ inputs.version-command }}
-          publish: ${{ inputs.publish-command }}
-          commit: "chore: release packages"
-          title: "chore: release packages"
+          # An INPUT now, not just the env below. v2 gives `github-token` a
+          # default of `${{ github.token }}`, so passing the PAT only through
+          # the environment would silently fall back to the bot token — and a
+          # release PR opened by it starts no workflow runs, which is the exact
+          # thing the PAT exists to prevent.
+          github-token: ${{ secrets.RELEASE_PAT }}
+          version-script: ${{ inputs.version-command }}
+          publish-script: ${{ inputs.publish-command }}
+          commit-message: "chore: release packages"
+          pr-title: "chore: release packages"
         env:
-          # PAT (not GITHUB_TOKEN): GITHUB_TOKEN-triggered events don't start new
-          # workflow runs, so the "Version Packages" PR would otherwise skip CI.
           GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
