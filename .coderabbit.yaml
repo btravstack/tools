@@ -4,7 +4,7 @@ reviews:
   path_filters:
     - "!pnpm-lock.yaml"
   path_instructions:
-    - path: "**/*.{json,jsonc,yml,yaml}"
+    - path: "packages/**"
       instructions: |
         These are the presets every other repository in the org extends —
         tsconfig, oxlint, oxfmt, commitlint, lefthook, typedoc — so the blast
