@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json
+
+reviews:
+  path_filters:
+    - "!pnpm-lock.yaml"
+  path_instructions:
+    - path: "**/*.{json,jsonc,yml,yaml}"
+      instructions: |
+        These are the presets every other repository in the org extends —
+        tsconfig, oxlint, oxfmt, commitlint, lefthook, typedoc — so the blast
+        radius of a change here is every consumer's gate, not this repository's.
+
+        Two failure modes worth flagging specifically:
+
+        - **A rule name that no longer exists fails the WHOLE lint run**, every
+          unrelated rule included, because oxlint refuses to parse a config
+          naming an unknown rule. Adding or renaming a rule in a preset is a
+          breaking change to every repository that extends it.
+        - **Raising a floor is breaking.** An `engines` bump, a TypeScript
+          `target`/`lib` change or a stricter compiler flag lands in every
+          consumer at once. Say when a diff does this without saying so.
+
+    - path: ".github/workflows/**"
+      instructions: |
+        These workflows are reusable and called by other repositories. An input
+        renamed or removed breaks the callers, which are not in this diff.
