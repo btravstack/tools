@@ -22,7 +22,7 @@ const check = (name, fn) => {
 
 // Every package ships exactly the files it lists, and those files load.
 const shipped = {
-  tsconfig: ["base.json"],
+  tsconfig: ["app.json", "base.json"],
   typedoc: ["base.json"],
   oxlint: ["base.json"],
   oxfmt: ["base.json"],
@@ -45,6 +45,12 @@ for (const [pkg, files] of Object.entries(shipped)) {
 check("tsconfig/base.json is strict", () => {
   const tsc = json("packages/tsconfig/base.json");
   if (tsc.compilerOptions?.strict !== true) throw new Error("strict must be true");
+});
+
+check("tsconfig/app.json extends base and emits no declarations", () => {
+  const app = json("packages/tsconfig/app.json");
+  if (app.extends !== "./base.json") throw new Error("app.json must extend ./base.json");
+  if (app.compilerOptions?.declaration !== false) throw new Error("declaration must be false");
 });
 
 check("typedoc/base.json loads the markdown plugin", () => {
