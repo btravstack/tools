@@ -50,7 +50,12 @@ check("tsconfig/base.json is strict", () => {
 check("tsconfig/app.json extends base and emits no declarations", () => {
   const app = json("packages/tsconfig/app.json");
   if (app.extends !== "./base.json") throw new Error("app.json must extend ./base.json");
-  if (app.compilerOptions?.declaration !== false) throw new Error("declaration must be false");
+  // Both, because the preset promises both: `declarationMap: true` under
+  // `declaration: false` emits nothing, so a regression there is silent — the
+  // exact shape this file exists to catch.
+  for (const flag of ["declaration", "declarationMap"]) {
+    if (app.compilerOptions?.[flag] !== false) throw new Error(`${flag} must be false`);
+  }
 });
 
 check("typedoc/base.json loads the markdown plugin", () => {
