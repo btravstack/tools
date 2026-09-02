@@ -20,10 +20,14 @@ allowBuilds:
   lefthook: true
 
 overrides:
-  # GHSA-7p8r-x3mc-p8w7 (High, supersedes GHSA-v2hh-gcrm-f6hx): fast-uri,
-  # patched in 3.1.5. Transitive only (via @commitlint/cli > ajv); dev-tooling
-  # only. 3.1.5 published 2026-07-31, past the 7-day cutoff.
-  "fast-uri@<3.1.5": "3.1.5"
+  # GHSA-7p8r-x3mc-p8w7 (High, supersedes GHSA-v2hh-gcrm-f6hx), then four more
+  # in the same parser — GHSA-5jgf-p345-68v8, GHSA-f65p-4m7j-42xc,
+  # GHSA-fph4-wmhf-6fwf, GHSA-jqff-g426-hqxp — all ReDoS or parsing confusion
+  # below 3.1.6. Transitive only (via @commitlint/cli > ajv); dev-tooling only.
+  # The floor moves rather than a second entry being added: two overlapping
+  # ranges for one package is how a floor stops applying unnoticed. 3.1.6
+  # published 2026-08-23, past the 7-day cutoff.
+  "fast-uri@<3.1.6": "3.1.6"
 
 # Supply-chain maturity delay: mirror the consumer repos. Don't adopt a freshly
 # published version until it has been on the registry for 7 days (10080 minutes).

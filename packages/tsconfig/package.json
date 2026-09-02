@@ -19,10 +19,12 @@
     "directory": "packages/tsconfig"
   },
   "files": [
+    "app.json",
     "base.json"
   ],
   "type": "module",
   "exports": {
+    "./app.json": "./app.json",
     "./base.json": "./base.json"
   },
   "publishConfig": {
