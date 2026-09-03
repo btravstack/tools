@@ -20,12 +20,14 @@
   },
   "files": [
     "app.json",
-    "base.json"
+    "base.json",
+    "test-d.json"
   ],
   "type": "module",
   "exports": {
     "./app.json": "./app.json",
-    "./base.json": "./base.json"
+    "./base.json": "./base.json",
+    "./test-d.json": "./test-d.json"
   },
   "publishConfig": {
     "access": "public"

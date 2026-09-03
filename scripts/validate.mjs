@@ -22,7 +22,7 @@ const check = (name, fn) => {
 
 // Every package ships exactly the files it lists, and those files load.
 const shipped = {
-  tsconfig: ["app.json", "base.json"],
+  tsconfig: ["app.json", "base.json", "test-d.json"],
   typedoc: ["base.json"],
   oxlint: ["base.json"],
   oxfmt: ["base.json"],
@@ -55,6 +55,22 @@ check("tsconfig/app.json extends base and emits no declarations", () => {
   // exact shape this file exists to catch.
   for (const flag of ["declaration", "declarationMap"]) {
     if (app.compilerOptions?.[flag] !== false) throw new Error(`${flag} must be false`);
+  }
+});
+
+check("tsconfig/test-d.json relaxes the unused checks and carries no paths", () => {
+  const testD = json("packages/tsconfig/test-d.json");
+  // An assertion binding is never read, so both checks must be off — that is
+  // the whole reason this file exists.
+  for (const flag of ["noUnusedLocals", "noUnusedParameters"]) {
+    if (testD.compilerOptions?.[flag] !== false) throw new Error(`${flag} must be false`);
+  }
+  // Measured, not assumed: TypeScript resolves a base config's `include` /
+  // `exclude` / `files` relative to the BASE file's own directory, so an
+  // `include` here would resolve inside node_modules and match nothing. Each
+  // workspace keeps its own, and this preset must never grow one.
+  for (const key of ["include", "exclude", "files", "extends"]) {
+    if (key in testD) throw new Error(`test-d.json must not carry "${key}"`);
   }
 });
 
