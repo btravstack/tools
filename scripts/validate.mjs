@@ -22,7 +22,7 @@ const check = (name, fn) => {
 
 // Every package ships exactly the files it lists, and those files load.
 const shipped = {
-  tsconfig: ["app.json", "base.json"],
+  tsconfig: ["app.json", "base.json", "test-d.json"],
   typedoc: ["base.json"],
   oxlint: ["base.json"],
   oxfmt: ["base.json"],
@@ -55,6 +55,34 @@ check("tsconfig/app.json extends base and emits no declarations", () => {
   // exact shape this file exists to catch.
   for (const flag of ["declaration", "declarationMap"]) {
     if (app.compilerOptions?.[flag] !== false) throw new Error(`${flag} must be false`);
+  }
+});
+
+check("tsconfig/test-d.json is exactly the two unused-check relaxations", () => {
+  const testD = json("packages/tsconfig/test-d.json");
+  // An ALLOW-list, not a deny-list: this preset is layered LAST in a consumer's
+  // `extends` array, so anything it grows silently overrides the workspace's
+  // own config. Naming what may appear is the only shape that catches a key
+  // nobody thought to forbid.
+  //
+  // `include` / `exclude` / `files` are the ones a reader will reach for and
+  // they cannot work here: TypeScript resolves a base config's globs relative
+  // to the BASE file's own directory, so a shipped glob points inside
+  // node_modules and matches nothing (measured: TS18003).
+  const top = Object.keys(testD).sort();
+  if (top.join() !== "$schema,compilerOptions") {
+    throw new Error(`top-level keys must be $schema + compilerOptions, got: ${top.join(", ")}`);
+  }
+  const options = Object.keys(testD.compilerOptions ?? {}).sort();
+  if (options.join() !== "noUnusedLocals,noUnusedParameters") {
+    throw new Error(
+      `compilerOptions must be exactly the two unused checks, got: ${options.join(", ")}`,
+    );
+  }
+  // An assertion binding is never read, so both must be OFF — the whole reason
+  // this file exists.
+  for (const flag of options) {
+    if (testD.compilerOptions[flag] !== false) throw new Error(`${flag} must be false`);
   }
 });
 
