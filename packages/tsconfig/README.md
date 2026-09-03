@@ -51,8 +51,9 @@ its consumers can build.
 
 Type-level tests assert with bindings nothing reads — `type _x = Expect<Equal<A, B>>`
 — so `noUnusedLocals` and `noUnusedParameters` have to be off for that project
-and on everywhere else. `test-d.json` is those two flags and nothing else,
-composed with the workspace's own config through an `extends` array:
+and on everywhere else. `test-d.json` sets exactly those two flags — nothing
+else, which `scripts/validate.mjs` enforces as an allow-list — and composes
+with the workspace's own config through an `extends` array:
 
 ```json
 {
