@@ -12,7 +12,7 @@
     },
     {
       "description": "Overrides are per-advisory security floors, each documented in pnpm-workspace.yaml; they move deliberately.",
-      "matchDepTypes": ["overrides"],
+      "matchDepTypes": ["pnpm-workspace.overrides"],
       "enabled": false
     },
     {
