@@ -28,6 +28,11 @@ overrides:
   # ranges for one package is how a floor stops applying unnoticed. 3.1.6
   # published 2026-08-23, past the 7-day cutoff.
   "fast-uri@<3.1.6": "3.1.6"
+  # GHSA-2883-xcg3-v3hh (High): js-yaml maxTotalMergeKeys does not limit CPU use
+  # for empty merge sources, below 4.3.2. Transitive only (via @commitlint/cli >
+  # cosmiconfig); dev-tooling only. 4.3.2 published 2026-08-26, past the 7-day
+  # cutoff.
+  "js-yaml@4": "4.3.2"
 
 # Supply-chain maturity delay: mirror the consumer repos. Don't adopt a freshly
 # published version until it has been on the registry for 7 days (10080 minutes).
