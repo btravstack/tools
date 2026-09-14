@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "schedule:weekly"],
+  "semanticCommits": "enabled",
+  "minimumReleaseAge": "7 days",
+  "prConcurrentLimit": 10,
+  "packageRules": [
+    {
+      "description": "Peer ranges and engines are compatibility promises to consumers, not versions to bump.",
+      "matchDepTypes": ["peerDependencies", "engines"],
+      "enabled": false
+    },
+    {
+      "description": "Overrides are per-advisory security floors, each documented in pnpm-workspace.yaml; they move deliberately.",
+      "matchDepTypes": ["pnpm-workspace.overrides"],
+      "enabled": false
+    },
+    {
+      "description": "This repo's own reusable workflows, referenced by tag and branch on purpose.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["btravstack/tools"],
+      "enabled": false
+    },
+    {
+      "groupName": "commitlint",
+      "matchPackageNames": ["@commitlint/*"]
+    },
+    {
+      "groupName": "oxc",
+      "matchPackageNames": ["oxlint", "oxfmt"]
+    },
+    {
+      "groupName": "typedoc",
+      "matchPackageNames": ["typedoc", "typedoc-plugin-markdown"]
+    },
+    {
+      "groupName": "github-actions",
+      "matchManagers": ["github-actions"]
+    }
+  ]
+}
