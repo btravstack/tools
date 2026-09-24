@@ -9,8 +9,16 @@
 #       branches: [main]
 #   jobs:
 #     release:
-#       if: ${{ github.event.workflow_run.conclusion == 'success' }}
-#       uses: btravstack/tools/.github/workflows/release-reusable.yml@main
+#       # `branches: [main]` matches the triggering run's HEAD branch, so a
+#       # fork PR from a branch named `main` passes it. Gate on the event and
+#       # the head repository, not on the branch name.
+#       if: >-
+#         ${{
+#           github.event.workflow_run.conclusion == 'success' &&
+#           github.event.workflow_run.event == 'push' &&
+#           github.event.workflow_run.head_repository.full_name == github.repository
+#         }}
+#       uses: btravstack/tools/.github/workflows/release-reusable.yml@<sha> # workflows-v1
 #       with:
 #         ref: ${{ github.event.workflow_run.head_sha }}
 #       secrets:
@@ -57,9 +65,25 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    # Defence in depth for every caller: a called workflow sees the CALLER's
+    # `github` context. A `workflow_run` caller's `branches:` filter matches the
+    # triggering run's head branch, so a fork PR from a branch named `main`
+    # would otherwise reach this job with the caller's secrets and OIDC token,
+    # check out the fork's commit and run its install and publish scripts.
+    # Only a successful push-triggered run of the caller's own repository may
+    # release; other triggers (e.g. workflow_dispatch) are unaffected.
+    if: >-
+      ${{
+        github.event_name != 'workflow_run' ||
+        (
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_repository.full_name == github.repository
+        )
+      }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref }}
           # PAT so the release PR is created with credentials that DO fire
@@ -68,10 +92,10 @@ jobs:
           token: ${{ secrets.RELEASE_PAT }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .node-version
           cache: pnpm
@@ -91,7 +115,7 @@ jobs:
       # v2 renamed every input; the pairs are version->version-script,
       # publish->publish-script, commit->commit-message, title->pr-title.
       - name: Create Release Pull Request or Publish to npm
-        uses: changesets/action@v2
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           # An INPUT now, not just the env below. v2 gives `github-token` a
           # default of `${{ github.token }}`, so passing the PAT only through
