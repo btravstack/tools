@@ -1,5 +1,10 @@
 # @btravstack/tools
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="branding/logo-dark.svg" />
+  <img src="branding/logo-light.svg" alt="btravstack tools" width="128" height="128" />
+</picture>
+
 Shared configuration packages for [btravstack](https://github.com/btravstack)
 repositories. Each repo used to hand-copy a near-identical `tools/tsconfig`,
 `tools/typedoc`, oxlint, oxfmt, commitlint, and lefthook setup; this monorepo

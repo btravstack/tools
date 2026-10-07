@@ -20,14 +20,14 @@ allowBuilds:
   lefthook: true
 
 overrides:
-  # GHSA-7p8r-x3mc-p8w7 (High, supersedes GHSA-v2hh-gcrm-f6hx), then four more
-  # in the same parser — GHSA-5jgf-p345-68v8, GHSA-f65p-4m7j-42xc,
-  # GHSA-fph4-wmhf-6fwf, GHSA-jqff-g426-hqxp — all ReDoS or parsing confusion
-  # below 3.1.6. Transitive only (via @commitlint/cli > ajv); dev-tooling only.
-  # The floor moves rather than a second entry being added: two overlapping
-  # ranges for one package is how a floor stops applying unnoticed. 3.1.6
-  # published 2026-08-23, past the 7-day cutoff.
-  "fast-uri@<3.1.6": "3.1.6"
+  # GHSA-qw65-cvwx-89v3, GHSA-58mr-gqgx-xq4g and GHSA-hrr3-gc8f-f4qj,
+  # plus earlier parser advisories: keep one security floor for commitlint's
+  # transitive URI parser. 3.1.8 published 2026-09-15, past the 7-day cutoff.
+  "fast-uri@<3.1.8": "3.1.8"
+  # oxfmt pins 2.1.0. These worker-option fixes address GHSA-5gmw-xhrv-c9v3
+  # and GHSA-85c8-ppgw-ccpr without upgrading the formatter. 2.1.2 published
+  # 2026-08-23, past the 7-day cutoff; its Node floor is compatible with oxfmt.
+  "tinypool@<2.1.2": "2.1.2"
   # GHSA-2883-xcg3-v3hh (High): js-yaml maxTotalMergeKeys does not limit CPU use
   # for empty merge sources, below 4.3.2. Transitive only (via @commitlint/cli >
   # cosmiconfig); dev-tooling only. 4.3.2 published 2026-08-26, past the 7-day
