@@ -1,8 +1,9 @@
 # Tools identity
 
-The beetroot silhouette connects tools to the btravstack family; the wrench
+The smiling pink beetroot keeps the approved illustrated style of the
+btravstack family, with green leaves and soft shading; its silver wrench
 identifies the shared build and release toolchain. Use `logo-light.svg` on light
-surfaces, `logo-dark.svg` on dark surfaces, and `logo-mono.svg` for black-on-white
+surfaces, `logo-dark.svg` on dark surfaces, and `logo-mono.svg` for grayscale
 print. `social-card.png` is the 1200 × 630 repository preview asset.
 
 Canonical SVG source: [generate-brand.mjs](https://github.com/btravstack/btravstack.github.io/blob/main/scripts/generate-brand.mjs).
